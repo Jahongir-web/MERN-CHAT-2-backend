@@ -39,9 +39,9 @@ const userCtrl = {
   updateUser: async (req, res) => {
     const {id} = req.params
     try {
-      const admin = await Users.findById(req.user.id)
+      const {currentUserAdmin} = req
 
-      if(id === req.user.id || admin.role === 101) {
+      if(id === req.user.id || currentUserAdmin) {
         if(req.body.password) {
           const heshPassword = await bcrypt.hash(req.body.password, 12)
           req.body.password = heshPassword
@@ -49,7 +49,7 @@ const userCtrl = {
 
         const user = await Users.findByIdAndUpdate(id, req.body, {new: true})
 
-        const {password, role, ...otherDetails} = user._doc
+        const {password, ...otherDetails} = user._doc
 
         res.status(200).json(otherDetails)
       } else {
@@ -63,9 +63,9 @@ const userCtrl = {
   // Delete a User
   deleteUser: async (req, res) => {
     const {id} = req.params
-    const admin = await Users.findById(req.user.id)
+    const {currentUserAdmin} = req
 
-    if(id === req.user.id || admin.role === 101) {
+    if(id === req.user.id || currentUserAdmin) {
       try {
         const deletedUser = await Users.findByIdAndDelete(id)
         if(deletedUser) {

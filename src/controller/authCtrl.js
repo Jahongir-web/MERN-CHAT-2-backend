@@ -6,7 +6,6 @@ const Users = require("../models/userModel");
 const authCtrl = {
   signUp: async (req, res) => {
     const {email} = req.body;
-
     try {
       const existingUser = await Users.findOne({ email });
       if (existingUser) {
@@ -24,11 +23,11 @@ const authCtrl = {
     
       await user.save();
     
-      const token = jwt.sign({ email: user.email, id: user._id }, JWT_SECRET, {
+      const token = jwt.sign({ email: user.email, id: user._id, role: user.role }, JWT_SECRET, {
         expiresIn: "1h",
       });
   
-      const {password, role, ...otherDetails} = user._doc
+      const {password, ...otherDetails} = user._doc
     
       res.status(201).json({ user: otherDetails, token });
       
@@ -51,9 +50,9 @@ const authCtrl = {
         return res.status(400).json({ message: "Invalid credentials!" });
       }
     
-      const token = jwt.sign({ email: existingUser.email, id: existingUser._id }, JWT_SECRET, { expiresIn: "1h" });
+      const token = jwt.sign({ email: existingUser.email, id: existingUser._id, role: existingUser.role }, JWT_SECRET, { expiresIn: "1h" });
     
-      const {password, role, ...otherDetails} = existingUser._doc
+      const {password, ...otherDetails} = existingUser._doc
       res.status(200).json({ user: otherDetails, token });
       
     } catch (error) {

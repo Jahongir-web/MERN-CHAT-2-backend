@@ -28,7 +28,18 @@ const messageCtrl = {
   },
 
   // delete a message
-
+  deleteMessage: async (req, res) => {
+    try {
+      const {messageId} = req.params
+      const messages = await Message.findByIdAndDelete(messageId)
+      if(messages) {
+        return res.status(200).json("Message deleted successfully!")
+      }
+      res.status(404).json("Message not found!")
+    } catch (error) {
+      res.status(500).json({message: error.message})
+    }
+  },
 }
 
 
