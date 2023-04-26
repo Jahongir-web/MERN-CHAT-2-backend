@@ -18,9 +18,9 @@ const chatCtrl = {
   findChat: async (req, res) => {
     try {
       const {firstId, secondId} = req.params
-      const chat = await Chat.find({members: {$all: [firstId, secondId]}})
+      const chat = await Chat.findOne({members: {$all: [firstId, secondId]}})
 
-      if(chat.length) {
+      if(chat) {
         return res.status(200).json(chat)
       }
 
